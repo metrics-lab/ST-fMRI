@@ -1,7 +1,7 @@
 # ST-fMRI
 This repository contains code for spatio-temporal deep learning on functional MRI data
 
-**COMING SOON..**
+**COMING SOON...**
 
 
 ## Downloading HCP Dataset
@@ -11,7 +11,13 @@ HCP data can be directly downloaded from </url>https://db.humanconnectome.org/ap
 
 ## Training Brain-MS-G3D 
 
-## REFERENCES 
+## Tensorboard support
+
+## Docker support 
+
+**Coming soon**
+
+## References 
 
 This repository is mostly based on:
 
@@ -20,3 +26,9 @@ This repository is mostly based on:
 and 
 
 - </url>https://github.com/sgadgil6/cnslab_fmri
+
+
+## Paper
+
+
+## References
