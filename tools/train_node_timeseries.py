@@ -2,7 +2,7 @@
 # @Author: Simon Dahan @SD3004
 # @Date:   2021-08-27 15:21:46
 # @Last Modified by:   Simon Dahan @SD3004
-# @Last Modified time: 2021-08-31 16:57:25
+# @Last Modified time: 2021-08-31 17:19:12
 
 import os
 import argparse
@@ -74,8 +74,7 @@ def train(args):
 
     for ws in W_list:
         
-        final_testing_accuracy = 0
-        testing_acc_curr_fold = []
+        testing_fold = []
         
         ##############################
         ######      LOGGING     ######
@@ -216,7 +215,78 @@ def train(args):
                 ##############################
 
                 import pdb;pdb.set_trace()
-            
+
+                # validate on test subjects by voting
+                epoch_val = args.epochs_val
+                if epoch % epoch_val == 0:  # print every K mini-batches
+                    idx_batch = np.random.permutation(int(test_data.shape[0]))
+                    idx_batch = idx_batch[:int(batch_size_testing)]
+
+                    test_label_batch = test_label[idx_batch]
+                    prediction = np.zeros((test_data.shape[0],))
+                    voter = np.zeros((test_data.shape[0],))
+                    if args.fluid:
+                        losses = 0
+                    for v in range(TS):
+                        idx = np.random.permutation(int(test_data.shape[0]))
+
+                        # testing also performed batch by batch (otherwise it produces error)
+                        for k in range(int(test_data.shape[0] / batch_size_testing)):
+                            idx_batch = idx[int(batch_size_testing * k):int(batch_size_testing * (k + 1))]
+
+                            # construct random sub-sequences from a batch of test subjects
+                            test_data_batch = np.zeros((batch_size_testing, 1, ws, ICA_nodes, 1))
+                            for i in range(batch_size_testing):
+                                r1 = random.randint(0, test_data.shape[2] - ws)
+                                test_data_batch[i] = test_data[idx_batch[i], :, r1:r1 + ws, :, :]
+
+                            test_data_batch_dev = torch.from_numpy(test_data_batch).float().to(device)
+                        
+                            outputs = net(test_data_batch_dev)
+                            if args.fluid:
+                                losses+= nn.functional.mse_loss(outputs.squeeze(), torch.from_numpy(test_label[idx_batch]).float().to(device)).detach().cpu().numpy()
+                            outputs = outputs.data.cpu().numpy()
+
+                            prediction[idx_batch] = prediction[idx_batch] + outputs[:, 0]
+                            voter[idx_batch] = voter[idx_batch] + 1
+
+                    prediction = prediction / voter
+
+                    if args.fluid:
+                        test_correlation = pearsonr(prediction,test_label)[0]
+                        writer.add_scalar('correlation/val_{}'.format(fold), test_correlation, epoch + 1)
+                        writer.add_scalar('loss/val_{}'.format(fold), losses/TS, epoch + 1)
+                        if test_correlation > best_test_corr_curr_fold:
+                            best_test_corr_curr_fold = test_correlation
+                            best_test_epoch_curr_fold = epoch
+                            print('saving model')
+                            torch.save(net.state_dict(), os.path.join(folder_to_save_model,'checkpoint.pth'))
+                    
+                    else:
+                        test_acc = sum((prediction > 0.5) == test_label) / test_label.shape[0]
+                        print(sum((prediction > 0.5) == test_label) / test_label.shape[0])
+                        print('[%d] testing batch acc %f' % (epoch + 1, test_acc))
+                        writer.add_scalar('accuracy/test_{}'.format(fold), test_acc, epoch+1)
+                        if test_acc > best_test_acc_curr_fold:
+                            best_test_acc_curr_fold = test_acc
+                            best_test_epoch_curr_fold = epoch
+                            print('saving model')
+                            torch.save(net.state_dict(), os.path.join(folder_to_save_model,'checkpoint.pth'))
+
+            if args.fluid: 
+                print("Best correlation for window {} and fold {} = {} at epoch = {}".format(ws, fold, best_test_corr_curr_fold, best_test_epoch_curr_fold))
+                testing_fold.append(best_test_corr_curr_fold)
+
+            else:
+                print("Best accuracy for window {} and fold {} = {} at epoch = {}".format(ws, fold, best_test_acc_curr_fold, best_test_epoch_curr_fold))
+                testing_fold.append(best_test_acc_curr_fold)
+                writer.add_scalar('accuracy_best/test'.format(fold), best_test_acc_curr_fold, fold)
+        
+        if args.fluid:
+            print("Window size {} completed. Final best testing correlation = {}".format(ws, np.mean(np.array(testing_fold))))
+            with open(os.path.join(folder_to_save_model,'testing_acc_fluid_ms_final.txt'.format(ICA_nodes)), 'a') as f:
+                f.write("Window size {} completed. Final testing accuracy = {} ; date {}; num epochs {}; dropout {}; g3d scales {}; gcn scales {}\n".format(ws, np.mean(np.array(testing_fold)), date, num_epochs, dropout,num_scales_g3d,num_scales_gcn))
+
 
 
         return 0 
@@ -311,6 +381,14 @@ if __name__ == '__main__':
                         required=False,
                         default=64,
                         help='number of voters per test subject')
+
+    parser.add_argument(
+                        '--epochs_val',
+                        type=int,
+                        required=False, 
+                        default=100,
+                        help='number of iterations')
+
 
     parser.add_argument('--fluid',
                           action='store_true')
