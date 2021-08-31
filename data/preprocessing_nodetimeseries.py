@@ -2,7 +2,7 @@
 # @Author: Simon Dahan @SD3004
 # @Date:   2021-08-26 15:02:02
 # @Last Modified by:   Simon Dahan @SD3004
-# @Last Modified time: 2021-08-27 15:13:00
+# @Last Modified time: 2021-08-31 16:11:26
 
 import os
 import argparse
@@ -166,16 +166,3 @@ def main(args):
         fold = fold + 1
   
 
-
-if __name__ == '__main__':
-
-    # Set up argument parser
-    parser = argparse.ArgumentParser(description='Preprocessing script for ICA nodes timeseries')
-    parser.add_argument('filename',help='list of HCP ids')
-    parser.add_argument('ICA', help='number of ICA nodes')
-    parser.add_argument('data_path', help='path to data')
-    parser.add_argument('output_folder', help='path to save data')
-     
-    args = parser.parse_args()
-    # Call training
-    main(args)
