@@ -1,0 +1,5 @@
+utils/__pycache__/*
+outputs/*
+models/MSG3D/__pycache__/*
+logs/*
+models/__pycache__/*
