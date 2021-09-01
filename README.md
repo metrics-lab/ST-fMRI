@@ -29,7 +29,7 @@ python train_node_timeseries.py --nodes 25 --bs 64 --epochs 100 --gpu 0 --window
 
 ## Tensorboard
 
-Starting tensorboard
+Starting tensorboard visualisation
 
 ```
 tensorboard --logdir ./logs/MS-G3D/
@@ -55,5 +55,5 @@ and
 - repository: </url>[ST-GCN](https://github.com/yysijie/st-gcn) - paper: </url>[S.Yan et al 2018](https://arxiv.org/abs/1801.07455)
 
 
-## Paper
+## Citation
 
