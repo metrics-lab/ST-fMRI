@@ -2,7 +2,7 @@
 
 We provide some advice for installation all dependencies with conda. 
 
-### Prepare environment. 
+### Prepare environment
 
 1. create a conda environement
 
