@@ -10,7 +10,9 @@ import os
 import argparse
 import yaml
 import sys
-sys.path.append('..')
+sys.path.append('../')
+sys.path.append('./')
+
 import random
 from datetime import datetime
 
@@ -89,7 +91,7 @@ def train(args):
 
         # creating folders for logging. 
 
-        folder_to_save_model = '../logs/MS-G3D/'
+        folder_to_save_model = './logs/MS-G3D/'
         try:
             os.mkdir(folder_to_save_model)
             print('Creating folder: {}'.format(folder_to_save_model))
