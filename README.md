@@ -11,7 +11,21 @@ HCP data can be directly downloaded from </url>https://db.humanconnectome.org/ap
 
 ## Training Brain-MS-G3D 
 
+For sex classification
+
+`python ./tools/train_node_timeseries.py --nodes 25 --bs 64 --epochs 100 --gpu 0 --windows 100 --data_path path_to_data`
+
+For fluid intelligence regression
+
+
+`python train_node_timeseries.py --nodes 25 --bs 64 --epochs 100 --gpu 0 --windows 100 --fluid --data_path path_to_data`
+
 ## Tensorboard support
+
+Starting tensorboard
+
+`tensorboard --logdir ./logs/MS-G3D/`
+
 
 ## Docker support 
 
