@@ -1,14 +1,20 @@
-# -*- coding: utf-8 -*-
-# @Author: Simon Dahan @SD3004
-# @Date:   2021-08-27 15:21:46
-# @Last Modified by:   Simon Dahan @SD3004
-# @Last Modified time: 2021-08-31 17:19:12
+#
+# Created on Tue Aug 31 2021
+#
+# by Simon Dahan @SD3004
+#
+# Copyright (c) 2021 MeTrICS Lab
+#
 
 import os
 import argparse
 import yaml
+import sys
+sys.path.append('..')
 import random
 from datetime import datetime
+
+
 
 import torch
 import torch.nn as nn
@@ -17,8 +23,9 @@ import numpy as np
 
 from scipy.stats import pearsonr
 
-
 from torch.utils.tensorboard import SummaryWriter
+
+from models.MSG3D.model import Model
 
 
 
@@ -145,6 +152,7 @@ def train(args):
             
             best_test_acc_curr_fold = 0
             best_test_epoch_curr_fold = 0
+            best_test_corr_curr_fold =0
             
             train_data = np.load(os.path.join(data_path,'train_data_1200_'+str(fold)+'.npy'))
             train_label = np.load(os.path.join(data_path,'train_label_1200_'+str(fold)+'.npy'))
@@ -153,12 +161,12 @@ def train(args):
 
             print(train_data.shape)
             
-            net = msg3d.Model(num_class = 1,
-                    num_point = ICA_nodes,
+            net = Model(num_class = 1,
+                    num_nodes = ICA_nodes,
                     num_person = 1,
                     num_gcn_scales = num_scales_gcn,
                     num_g3d_scales = num_scales_g3d,
-                    graph ='',
+                    path_to_data = data_path,
                     dropout= dropout)
         
             net.to(device)
@@ -200,7 +208,7 @@ def train(args):
 
                 else:
 
-                    outputs = torch.nn.functional.sigmoid(outputs)
+                    outputs = torch.sigmoid(outputs)
                     loss = criterion(outputs.squeeze(), train_label_batch_dev)
                     writer.add_scalar('loss/train_{}'.format(fold), loss.item(), epoch+1)
                     outputs = outputs.data.cpu().numpy() > 0.5
@@ -214,7 +222,6 @@ def train(args):
                 ######    VALIDATION    ######
                 ##############################
 
-                import pdb;pdb.set_trace()
 
                 # validate on test subjects by voting
                 epoch_val = args.epochs_val
@@ -289,7 +296,6 @@ def train(args):
 
 
 
-        return 0 
 
 
 
@@ -342,7 +348,7 @@ if __name__ == '__main__':
                         '--dropout',
                         type=float,
                         required=False,
-                        default=0,
+                        default=0.0,
                         help='windows')
 
                             
