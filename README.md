@@ -6,10 +6,17 @@ This repository contains code for spatio-temporal deep learning on functional MR
 
 HCP data can be directly downloaded from </url>[Human Connectome Project](https://db.humanconnectome.org/)
 
-
 ## Installation
 
 For PyTorch and dependencies installation, please follow instructions in [install.md](docs/install.md)
+
+## Preprocessing 
+
+In the folder /data/: 
+
+```
+python preprocessing_nodetimeseries.py  subjects.txt 25 /data/HCP/rfMRI ../outputs/
+```
 
 
 ## Training Brain-MS-G3D 
