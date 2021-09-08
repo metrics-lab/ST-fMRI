@@ -1,5 +1,8 @@
 # ST-fMRI
-This repository contains code for spatio-temporal deep learning on functional MRI data
+This repository contains code for spatio-temporal deep learning on functional MRI data for phenotyping prediction. The original work was published at </url>[MLCN 2021](https://mlcnws.com/):
+
+
+</url>[Improving Phenotype Prediction using Long-Range Spatio-Temporal Dynamics of Functional Connectivity](https://arxiv.org/abs/2109.03115)
 
 
 ## Downloading HCP Dataset
@@ -63,4 +66,17 @@ and
 
 
 ## Citation
+
+Please cite this work if you found it useful:
+
+```
+@misc{dahan2021improving,
+      title={Improving Phenotype Prediction using Long-Range Spatio-Temporal Dynamics of Functional Connectivity}, 
+      author={Simon Dahan and Logan Z. J. Williams and Daniel Rueckert and Emma C. Robinson},
+      year={2021},
+      eprint={2109.03115},
+      archivePrefix={arXiv},
+      primaryClass={q-bio.NC}
+      }
+```
 
