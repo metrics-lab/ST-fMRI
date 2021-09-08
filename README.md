@@ -1,5 +1,5 @@
 # ST-fMRI
-This repository contains code for spatio-temporal deep learning on functional MRI data for phenotyping prediction. The original work was published at </url>[MLCN 2021](https://mlcnws.com/):
+This repository contains PyTorch code for spatio-temporal deep learning on functional MRI data for phenotyping prediction. The original work was published at </url>[MLCN 2021](https://mlcnws.com/):
 
 
 </url>[Improving Phenotype Prediction using Long-Range Spatio-Temporal Dynamics of Functional Connectivity](https://arxiv.org/abs/2109.03115)
@@ -34,7 +34,7 @@ For fluid intelligence regression
 
 
 ```
-python train_node_timeseries.py --nodes 25 --bs 64 --epochs 100 --gpu 0 --windows 100 --fluid --data_path path_to_data
+python ./tools/train_node_timeseries.py --nodes 25 --bs 64 --epochs 100 --gpu 0 --windows 100 --fluid --data_path path_to_data
 ```
 
 ## Tensorboard
